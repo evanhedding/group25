@@ -27,9 +27,9 @@ def compute_dynamics(xvec, u, dt, compute_jacobians=True):
 
     d_th = w*dt
     if abs(w) < EPSILON_OMEGA:
-	g[0] = x + V*np.cos(th)*dt
-	g[1] = y + V*np.sin(th)*dt
-	g[2] = th + d_th
+	    g[0] = x + V*np.cos(th)*dt
+	    g[1] = y + V*np.sin(th)*dt
+	    g[2] = th + d_th
     else:
         g[0] = x + V*(np.sin(th + d_th)-np.sin(th))/w
         g[1] = y + V*(-np.cos(th + d_th) + np.cos(th))/w
@@ -38,22 +38,22 @@ def compute_dynamics(xvec, u, dt, compute_jacobians=True):
     Gx = np.eye(3)
     Gu = np.zeros((3,2))
     if compute_jacobians:	
-	if abs(w) < EPSILON_OMEGA:
-	    Gu[0,0] = np.cos(th)*dt
-	    Gu[1,0] = np.sin(th)*dt
-	    Gu[2,1] = dt
+	    if abs(w) < EPSILON_OMEGA:
+	        Gu[0,0] = np.cos(th)*dt
+	        Gu[1,0] = np.sin(th)*dt
+	        Gu[2,1] = dt
 
-	    Gx[0,2] = -V*np.sin(th)*dt
-	    Gx[1,2] = V*np.cos(th)*dt
-	else:	
-	    Gx[0,2] = V*(np.cos(th + d_th) - np.cos(th))/w  
+	        Gx[0,2] = -V*np.sin(th)*dt
+	        Gx[1,2] = V*np.cos(th)*dt
+	    else:	
+	        Gx[0,2] = V*(np.cos(th + d_th) - np.cos(th))/w  
             Gx[1,2] = V*(np.sin(th + d_th) - np.sin(th))/w 
 
-	    Gu[0,0] = (np.sin(th + d_th) - np.sin(th))/w
-	    Gu[1,0] = (np.cos(th) - np.cos(th + d_th))/w
-	    Gu[0,1] = -V*(np.sin(th + d_th) - np.sin(th))/w**2 + V*(dt*np.cos(th + d_th))/w
-	    Gu[1,1] = -V*(np.cos(th) - np.cos(th + d_th))/w**2 + V*(dt*np.sin(th + d_th))/w
-	    Gu[2,1] = dt
+	        Gu[0,0] = (np.sin(th + d_th) - np.sin(th))/w
+	        Gu[1,0] = (np.cos(th) - np.cos(th + d_th))/w
+	        Gu[0,1] = -V*(np.sin(th + d_th) - np.sin(th))/w**2 + V*(dt*np.cos(th + d_th))/w
+	        Gu[1,1] = -V*(np.cos(th) - np.cos(th + d_th))/w**2 + V*(dt*np.sin(th + d_th))/w
+	        Gu[2,1] = dt
     ########## Code ends here ##########
 
     if not compute_jacobians:
