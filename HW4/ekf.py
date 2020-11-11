@@ -87,7 +87,7 @@ class Ekf(object):
         S = np.dot(np.dot(H,self.Sigma), H.T) + Q
         K = np.dot(np.dot(self.Sigma, H.T), np.linalg.inv(S))
         
-        self.x = self.x + np.dot(K, z.reshape((np.size(z),)))
+        self.x = self.x + np.dot(K, z)
         
         self.Sigma = self.Sigma - np.dot(np.dot(K, S), K.T)
         ########## Code ends here ##########
@@ -170,7 +170,7 @@ class EkfLocalization(Ekf):
         
         for i in range(1,len(v_list)):
             
-            z = np.vstack((z,  v_list[i]))
+            z = np.squeeze(np.hstack((z,  v_list[i])))
             H = np.vstack((H, H_list[i]))
             Q = scipy.linalg.block_diag(Q, Q_list[i]) 
         ########## Code ends here ##########
@@ -309,11 +309,10 @@ class EkfSlam(Ekf):
         # TODO: Compute g, Gx, Gu.
         # HINT: This should be very similar to EkfLocalization.transition_model() and take 1-5 lines of code.
         # HINT: Call tb.compute_dynamics() with the correct elements of self.x
-
-        g0, Gx0, Gu0 = tb.compute_dynamics(self.x[0:3], u, dt)
-        g[0:3] = g0
-        Gx[0:Gx0.shape[0], 0:Gx0.shape[1]] = Gx0
-        Gx[0:Gu0.shape[0], 0:Gu0.shape[1]] = Gu0
+        g0, Gx0, Gu0 = tb.compute_dynamics(self.x[:3], u, dt)
+        g[:3] = g0
+        Gx[:Gx0.shape[0], :Gx0.shape[1]] = Gx0
+        Gx[:Gu0.shape[0], :Gu0.shape[1]] = Gu0
         ########## Code ends here ##########
 
         return g, Gx, Gu
@@ -344,7 +343,7 @@ class EkfSlam(Ekf):
         Q = Q_list[0]
         H = H_list[0]
         for i in range(1,len(v_list)):
-            z = np.vstack((z,  v_list[i]))
+            z = np.squeeze(np.hstack((z,  v_list[i])))
             H = np.vstack((H, H_list[i]))
             Q = scipy.linalg.block_diag(Q, Q_list[i])
         ########## Code ends here ##########
@@ -432,6 +431,7 @@ class EkfSlam(Ekf):
             x,y,th = self.x[0:3]
             
             Hx[:,0:3] = Hx_first_3
+
             if j >= 2:
                 Hx[:,idx_j:idx_j+2] = np.eye(2)
                 Hx[1,idx_j] = np.sin(-alpha)*(x_b*np.cos(th) - y_b*np.sin(th) + x) + np.sin(-alpha)*(x_b*np.sin(th) + y_b*np.cos(th) + y)
