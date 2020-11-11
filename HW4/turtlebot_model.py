@@ -26,9 +26,9 @@ def compute_dynamics(xvec, u, dt, compute_jacobians=True):
     V,w = u	
 
     d_th = w*dt
-    print(abs(w) < EPSILON_OMEGA)
+
     if np.abs(w) <= EPSILON_OMEGA:
-        print('hi')
+
 	g[0] = x + V*np.cos(th)*dt
 	g[1] = y + V*np.sin(th)*dt
 	g[2] = th + d_th
@@ -41,7 +41,7 @@ def compute_dynamics(xvec, u, dt, compute_jacobians=True):
     Gu = np.zeros((3,2))
     if compute_jacobians:	
 	    if np.abs(w) <= EPSILON_OMEGA:
-                print('hello')
+               
 	        Gu[0,0] = np.cos(th)*dt
 	        Gu[1,0] = np.sin(th)*dt
 	        Gu[2,1] = dt

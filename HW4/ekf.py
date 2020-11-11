@@ -390,7 +390,6 @@ class EkfSlam(Ekf):
                 if d_xy < min_dist:
                     min_dist = d_xy
                     min_innovation = innovation
-                    print(min_innovation)
                     min_Q = Q_raw[x]
                     min_Hs = Hs[y]
 
