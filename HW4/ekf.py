@@ -310,9 +310,10 @@ class EkfSlam(Ekf):
         # HINT: This should be very similar to EkfLocalization.transition_model() and take 1-5 lines of code.
         # HINT: Call tb.compute_dynamics() with the correct elements of self.x
         g0, Gx0, Gu0 = tb.compute_dynamics(self.x[:3], u, dt)
+        
         g[:3] = g0
         Gx[:Gx0.shape[0], :Gx0.shape[1]] = Gx0
-        Gx[:Gu0.shape[0], :Gu0.shape[1]] = Gu0
+        Gu[:Gu0.shape[0], :Gu0.shape[1]] = Gu0
         ########## Code ends here ##########
 
         return g, Gx, Gu
@@ -389,6 +390,7 @@ class EkfSlam(Ekf):
                 if d_xy < min_dist:
                     min_dist = d_xy
                     min_innovation = innovation
+                    print(min_innovation)
                     min_Q = Q_raw[x]
                     min_Hs = Hs[y]
 
