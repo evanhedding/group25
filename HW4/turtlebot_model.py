@@ -47,7 +47,7 @@ def compute_dynamics(xvec, u, dt, compute_jacobians=True):
 	        Gx[1,2] = V*np.cos(th)*dt
 	    else:	
 	        Gx[0,2] = V*(np.cos(th + d_th) - np.cos(th))/w  
-            Gx[1,2] = V*(np.sin(th + d_th) - np.sin(th))/w 
+            	Gx[1,2] = V*(np.sin(th + d_th) - np.sin(th))/w 
 
 	        Gu[0,0] = (np.sin(th + d_th) - np.sin(th))/w
 	        Gu[1,0] = (np.cos(th) - np.cos(th + d_th))/w
