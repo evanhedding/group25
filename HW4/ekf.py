@@ -227,11 +227,11 @@ class EkfLocalization(Ekf):
             for y in range(len(Hs)):
                 h = hs[:,y]
                 z = z_raw[:,x]
-                innovation = angle_diff(z,h)
-                #innovation = z-h
+#                innovation = angle_diff(z,h)
+                innovation = z-h
                 inno_covariance = np.dot(np.dot(Hs[y],self.Sigma),Hs[y].T)+Q_raw[x]
                 d_xy = np.dot(np.dot(innovation.T, np.linalg.inv(inno_covariance)),innovation)           
-                if d_xy < min_dist:
+                if d_xy < min_dist and d_xy < self.g ** 2:
                     min_dist = d_xy
                     min_innovation = innovation
                     min_Q = Q_raw[x]

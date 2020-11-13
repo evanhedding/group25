@@ -27,11 +27,10 @@ def compute_dynamics(xvec, u, dt, compute_jacobians=True):
 
     d_th = w*dt
 
-    if np.abs(w) <= EPSILON_OMEGA:
-
-	g[0] = x + V*np.cos(th)*dt
-	g[1] = y + V*np.sin(th)*dt
-	g[2] = th + d_th
+    if np.abs(w) < EPSILON_OMEGA:
+        g[0] = x + V*np.cos(th)*dt
+        g[1] = y + V*np.sin(th)*dt
+        g[2] = th + d_th
     else:
         g[0] = x + V*(np.sin(th + d_th)-np.sin(th))/w
         g[1] = y + V*(-np.cos(th + d_th) + np.cos(th))/w
@@ -39,24 +38,25 @@ def compute_dynamics(xvec, u, dt, compute_jacobians=True):
 	
     Gx = np.eye(3)
     Gu = np.zeros((3,2))
-    if compute_jacobians:	
-	    if np.abs(w) <= EPSILON_OMEGA:
-               
-	        Gu[0,0] = np.cos(th)*dt
-	        Gu[1,0] = np.sin(th)*dt
-	        Gu[2,1] = dt
+    if compute_jacobians:
+        if np.abs(w) < EPSILON_OMEGA:
+            Gu[0,0] = np.cos(th)*dt
+	    Gu[1,0] = np.sin(th)*dt
+	    Gu[2,1] = dt
+            Gu[0,1] = V * (-np.cos(th + d_th) * dt ** 2 * d_th - np.sin(th + d_th) * dt ** 2 - np.sin(th + d_th) * dt ** 2 + np.sin(th + d_th) * dt ** 2) / 2
+            Gu[1,1] = V * (-np.sin(th + d_th) * dt ** 2 * d_th + np.cos(th + d_th) * dt ** 2 + np.cos(th + d_th) * dt ** 2 - np.cos(th + d_th) * dt ** 2) / 2
 
-	        Gx[0,2] = -V*np.sin(th)*dt
-	        Gx[1,2] = V*np.cos(th)*dt
-	    else:	
-	        Gx[0,2] = V*(np.cos(th + d_th) - np.cos(th))/w  
-            	Gx[1,2] = V*(np.sin(th + d_th) - np.sin(th))/w 
+	    Gx[0,2] = -V*np.sin(th)*dt
+	    Gx[1,2] = V*np.cos(th)*dt
+        else:	
+            Gx[0,2] = V*(np.cos(th + d_th) - np.cos(th))/w  
+            Gx[1,2] = V*(np.sin(th + d_th) - np.sin(th))/w 
 
-	        Gu[0,0] = (np.sin(th + d_th) - np.sin(th))/w
-	        Gu[1,0] = (np.cos(th) - np.cos(th + d_th))/w
-	        Gu[0,1] = -V*(np.sin(th + d_th) - np.sin(th))/w**2 + V*(dt*np.cos(th + d_th))/w
-	        Gu[1,1] = -V*(np.cos(th) - np.cos(th + d_th))/w**2 + V*(dt*np.sin(th + d_th))/w
-	        Gu[2,1] = dt
+            Gu[0,0] = (np.sin(th + d_th) - np.sin(th))/w
+            Gu[1,0] = (np.cos(th) - np.cos(th + d_th))/w
+            Gu[0,1] = V * (np.cos(th + d_th) * d_th - np.sin(th + d_th) + np.sin(th)) / w ** 2 
+            Gu[1,1] = V * (np.sin(th + d_th) * d_th + np.cos(th + d_th) - np.cos(th)) / w ** 2
+            Gu[2,1] = dt
     ########## Code ends here ##########
 
     if not compute_jacobians:
@@ -101,9 +101,8 @@ def transform_line_to_scanner_frame(line, x, tf_base_to_camera, compute_jacobian
     R2 = np.array([[np.cos(-alpha), -np.sin(-alpha), 0],
 		   [np.sin(-alpha),  np.cos(-alpha), 0],
                    [0,              0,             1]])
-    
     proj = np.dot(R2, pose_cam_wf)
-    r_cam = r -proj[0]
+    r_cam = r - proj[0]
     h = np.squeeze(np.array([alpha_cam_wf, r_cam]))
 
     ########## Code ends here ##########
