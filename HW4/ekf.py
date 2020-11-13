@@ -383,8 +383,8 @@ class EkfSlam(Ekf):
             for y in range((len(self.x) - 3)/2):
                 h = hs[:,y]
                 z = z_raw[:,x]
-                innovation = angle_diff(z,h)
-                #innovation = z-h
+                #innovation = angle_diff(z,h)
+                innovation = z-h
                 inno_covariance = np.dot(np.dot(Hs[y],self.Sigma),Hs[y].T)+Q_raw[x]
                 d_xy = np.dot(np.dot(innovation.T, np.linalg.inv(inno_covariance)),innovation)           
                 if d_xy < min_dist:
@@ -435,9 +435,8 @@ class EkfSlam(Ekf):
 
             if j >= 2:
                 Hx[:,idx_j:idx_j+2] = np.eye(2)
-                Hx[1,idx_j] = np.sin(-alpha)*(x_b*np.cos(th) - y_b*np.sin(th) + x) + np.sin(-alpha)*(x_b*np.sin(th) + y_b*np.cos(th) + y)
+                Hx[1,idx_j] = -np.sin(-alpha)*(x_b*np.cos(th) - y_b*np.sin(th) + x) - np.cos(-alpha)*(x_b*np.sin(th) + y_b*np.cos(th) + y)
 
-            
             ########## Code ends here ##########
 
             h, Hx = tb.normalize_line_parameters(h, Hx)
